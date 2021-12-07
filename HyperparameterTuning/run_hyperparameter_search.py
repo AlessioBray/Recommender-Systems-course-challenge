@@ -414,8 +414,8 @@ def run_KNNRecommender_on_similarity_type(similarity_type, hyperparameterSearch,
     original_hyperparameter_search_space = hyperparameter_search_space
 
     hyperparameters_range_dictionary = {
-        "topK": Integer(5, 1000),
-        "shrink": Integer(0, 1000),
+        "topK": Integer(5, 10000),
+        "shrink": Integer(0, 5000),
         "similarity": Categorical([similarity_type]),
         "normalize": Categorical([True, False]),
     }
