@@ -756,10 +756,10 @@ def runHyperparameterSearch_Collaborative(recommender_class, URM_train, URM_trai
         if recommender_class is RP3betaRecommender:
 
             hyperparameters_range_dictionary = {
-                "topK": Integer(1000, 2000),
-                "alpha": Real(low = 0, high = 1, prior = 'uniform'),
-                "beta": Real(low = 0, high = 1, prior = 'uniform'),
-                "normalize_similarity": Categorical([True, False]),
+                "topK": Integer(100, 800),
+                "alpha": Real(low = 0, high = 1.2, prior = 'uniform'),
+                "beta": Real(low = 0, high = 1.2, prior = 'uniform'),
+                "normalize_similarity": Categorical([True]),
             }
 
             recommender_input_args = SearchInputRecommenderArgs(

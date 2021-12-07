@@ -8,10 +8,8 @@ from Recommenders.BaseSimilarityMatrixRecommender import BaseItemSimilarityMatri
 import numpy as np
 
 
-class ScoresHybridRecommender(BaseSimilarityMatrixRecommender):
-    """ ScoresHybridRecommender
-    Hybrid of N prediction scores R
-    """
+"""
+class ScoresHybridRecommender2(BaseSimilarityMatrixRecommender):
 
     RECOMMENDER_NAME = "ScoresHybridRecommender"
 
@@ -46,11 +44,14 @@ class ScoresHybridRecommender(BaseSimilarityMatrixRecommender):
         return item_weights
 
 """
-INSPIRATION
 
 from Recommenders.BaseRecommender import BaseRecommender
 
 class ScoresHybridRecommender(BaseRecommender):
+
+    """ ScoresHybridRecommender
+    Hybrid of 2 prediction scores R
+    """
 
     RECOMMENDER_NAME = "ScoresHybridRecommender"
 
@@ -63,7 +64,7 @@ class ScoresHybridRecommender(BaseRecommender):
         
         
     def fit(self, alpha = 0.5):
-        self.alpha = alpha      
+        self.alpha = alpha     
 
 
     def _compute_item_score(self, user_id_array, items_to_compute):
@@ -76,5 +77,4 @@ class ScoresHybridRecommender(BaseRecommender):
 
         return item_weights
 
-"""
 
