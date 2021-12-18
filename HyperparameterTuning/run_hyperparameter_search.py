@@ -31,6 +31,8 @@ from Recommenders.SLIM.SLIMElasticNetRecommender import SLIMElasticNetRecommende
 # Matrix Factorization
 from Recommenders.MatrixFactorization.PureSVDRecommender import PureSVDRecommender, PureSVDItemRecommender
 from Recommenders.MatrixFactorization.IALSRecommender import IALSRecommender
+from Recommenders.MatrixFactorization.IALSRecommender_implicit import IALSRecommender_implicit
+
 from Recommenders.MatrixFactorization.NMFRecommender import NMFRecommender
 from Recommenders.MatrixFactorization.Cython.MatrixFactorization_Cython import MatrixFactorization_BPR_Cython,\
     MatrixFactorization_FunkSVD_Cython, MatrixFactorization_AsySVD_Cython
@@ -274,7 +276,6 @@ def runHyperparameterSearch_Hybrid(recommender_class, URM_train, ICM_object, ICM
 
             elif recommender_class is UserKNN_CFCBF_Hybrid_Recommender:
                 hyperparameters_range_dictionary["UCM_weight"] = Real(low = 1e-2, high = 1e2, prior = 'log-uniform')
-
 
 
 
@@ -617,7 +618,7 @@ def runHyperparameterSearch_Collaborative(recommender_class, URM_train, URM_trai
     if not os.path.exists(output_folder_path):
         os.makedirs(output_folder_path)
 
-    earlystopping_keywargs = {"validation_every_n": 50,
+    earlystopping_keywargs = {"validation_every_n": 5,
                               "stop_on_validation": True,
                               "evaluator_object": evaluator_validation_earlystopping,
                               "lower_validations_allowed": 5,
@@ -738,7 +739,7 @@ def runHyperparameterSearch_Collaborative(recommender_class, URM_train, URM_trai
         if recommender_class is P3alphaRecommender:
 
             hyperparameters_range_dictionary = {
-                "topK": Integer(5, 1000),
+                "topK": Integer(50, 200),
                 "alpha": Real(low = 0, high = 2, prior = 'uniform'),
                 "normalize_similarity": Categorical([True, False]),
             }
@@ -755,10 +756,29 @@ def runHyperparameterSearch_Collaborative(recommender_class, URM_train, URM_trai
 
         if recommender_class is RP3betaRecommender:
 
+            """
+            ## FOR AUGMENTED URM
             hyperparameters_range_dictionary = {
-                "topK": Integer(100, 800),
-                "alpha": Real(low = 0, high = 1.2, prior = 'uniform'),
-                "beta": Real(low = 0, high = 1.2, prior = 'uniform'),
+                "topK": Integer(5, 200),
+                "alpha": Real(low = 0, high = 1, prior = 'uniform'),
+                "beta": Real(low = 0, high = 1, prior = 'uniform'),
+                "normalize_similarity": Categorical([True]),
+            }
+            """
+            """
+            ## FOR basic URM
+            hyperparameters_range_dictionary = {
+                "topK": Integer(800, 1200),
+                "alpha": Real(low = 0, high = 1, prior = 'uniform'),
+                "beta": Real(low = 0, high = 1, prior = 'uniform'),
+                "normalize_similarity": Categorical([True]),
+            }
+            """
+            ## FOR AUGMENTED URM
+            hyperparameters_range_dictionary = {
+                "topK": Categorical([51, 59, 61, 66]),
+                "alpha": Real(low = 0, high = 1, prior = 'uniform'),
+                "beta": Real(low = 0, high = 1, prior = 'uniform'),
                 "normalize_similarity": Categorical([True]),
             }
 
@@ -850,8 +870,8 @@ def runHyperparameterSearch_Collaborative(recommender_class, URM_train, URM_trai
         if recommender_class is IALSRecommender:
 
             hyperparameters_range_dictionary = {
-                "num_factors": Integer(1, 200),
-                "epochs": Categorical([300]),
+                "num_factors": Integer(20, 100),
+                "epochs": Categorical([50]),
                 "confidence_scaling": Categorical(["linear", "log"]),
                 "alpha": Real(low = 1e-3, high = 50.0, prior = 'log-uniform'),
                 "epsilon": Real(low = 1e-3, high = 10.0, prior = 'log-uniform'),
@@ -863,6 +883,24 @@ def runHyperparameterSearch_Collaborative(recommender_class, URM_train, URM_trai
                 CONSTRUCTOR_KEYWORD_ARGS = {},
                 FIT_POSITIONAL_ARGS = [],
                 FIT_KEYWORD_ARGS = earlystopping_keywargs
+            )
+        
+        ##########################################################################################################
+        
+        if recommender_class is IALSRecommender_implicit:
+
+            hyperparameters_range_dictionary = {
+                "n_factors": Integer(100,500),
+                "regularization": Real(low = 0.4, high = 0.8, prior = 'uniform'),
+                "iterations": Integer(60,90),
+                "num_threads": Real(low = 0.4, high = 0.65, prior = 'uniform'),
+            }
+
+            recommender_input_args = SearchInputRecommenderArgs(
+                CONSTRUCTOR_POSITIONAL_ARGS = [URM_train],
+                CONSTRUCTOR_KEYWORD_ARGS = {},
+                FIT_POSITIONAL_ARGS = [],
+                FIT_KEYWORD_ARGS = {}
             )
 
 
