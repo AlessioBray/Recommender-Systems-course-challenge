@@ -9,7 +9,6 @@ import scipy.sparse as sps
 import numpy as np
 
 
-
 from Recommenders.BaseRecommender import BaseRecommender
 
 class ScoresHybridRecommender(BaseRecommender):
@@ -48,20 +47,21 @@ class NScoresHybridRecommender(BaseRecommender):
     Hybrid of N prediction scores R, with N from 1 to 4
     """
 
-    RECOMMENDER_NAME = "ScoresHybridRecommender"
+    RECOMMENDER_NAME = "N_ScoresHybridRecommender"
 
     def __init__(self, URM_train, recommender_array, number_of_recommenders):
-        super(ScoresHybridRecommender, self).__init__(URM_train)
+        super(NScoresHybridRecommender, self).__init__(URM_train)
 
         self.number_of_recommenders = number_of_recommenders
         self.URM_train = check_matrix(URM_train.copy(), 'csr')
         self.recommender_array = recommender_array
+        
         print('Number of recommenders: ', self.number_of_recommenders)
 
-    def fit(self, alpha, beta, gamma, delta):
+    def fit(self, alpha = 0, beta = 0, gamma = 0, delta = 0):
         self.weight_array = [alpha, beta, gamma, delta]
 
-    def _compute_item_score(self, user_id_array, items_to_compute):
+    def _compute_item_score(self, user_id_array, items_to_compute = None):
 
         item_weights = []
         for i in range(self.number_of_recommenders):
@@ -69,6 +69,8 @@ class NScoresHybridRecommender(BaseRecommender):
             item_weights.append(self.recommender_array[i]._compute_item_score(user_id_array))
 
         weighted_matrices = [a * b for a, b in zip(item_weights, self.weight_array[:len(item_weights)])]
+        
+        #print(self.weight_array[:len(item_weights)])
         #print(weighted_matrices[0].shape)
         # item_weights_1 = self.Recommender_1._compute_item_score(user_id_array)
         # item_weights_2 = self.Recommender_2._compute_item_score(user_id_array)

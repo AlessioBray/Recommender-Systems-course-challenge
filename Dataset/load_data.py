@@ -73,7 +73,7 @@ def load_data():
 
     ## Preprocess ICMs
 
-    ICM_event = preprocess_ICM('ICM_event', ICM_event_dataframe)
+    #ICM_event = preprocess_ICM('ICM_event', ICM_event_dataframe)
 
     ## Data Analysis
 

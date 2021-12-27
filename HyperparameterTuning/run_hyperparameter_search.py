@@ -774,6 +774,7 @@ def runHyperparameterSearch_Collaborative(recommender_class, URM_train, URM_trai
                 "normalize_similarity": Categorical([True]),
             }
             """
+            """
             ## FOR AUGMENTED URM
             hyperparameters_range_dictionary = {
                 "topK": Categorical([51, 59, 61, 66]),
@@ -781,7 +782,16 @@ def runHyperparameterSearch_Collaborative(recommender_class, URM_train, URM_trai
                 "beta": Real(low = 0, high = 1, prior = 'uniform'),
                 "normalize_similarity": Categorical([True]),
             }
-
+            """
+            
+            ## FOR AUGMENTED URM no event
+            hyperparameters_range_dictionary = {
+                "topK": Categorical([50, 51, 55, 56, 60, 61, 65, 66]),
+                "alpha": Real(low = 0, high = 1, prior = 'uniform'),
+                "beta": Real(low = 0, high = 1, prior = 'uniform'),
+                "normalize_similarity": Categorical([True]),
+            }
+            
             recommender_input_args = SearchInputRecommenderArgs(
                 CONSTRUCTOR_POSITIONAL_ARGS = [URM_train],
                 CONSTRUCTOR_KEYWORD_ARGS = {},

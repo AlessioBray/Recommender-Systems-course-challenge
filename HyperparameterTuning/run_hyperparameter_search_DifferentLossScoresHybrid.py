@@ -7,12 +7,14 @@ Created on 07/12/21
 import os, multiprocessing
 from functools import partial
 
+import numpy as np
+
 
 ######################################################################
-##########                                                  ##########
-##########                  PURE COLLABORATIVE              ##########
-##########                                                  ##########
-######################################################################
+# #########                                                  ##########
+# #########                  PURE COLLABORATIVE              ##########
+# #########                                                  ##########
+# #####################################################################
 from Recommenders.NonPersonalizedRecommender import TopPop, Random, GlobalEffects
 
 # KNN
@@ -37,20 +39,20 @@ from Recommenders.Neural.MultVAERecommender import MultVAERecommender_OptimizerM
 from Recommenders.FactorizationMachines.LightFMRecommender import LightFMCFRecommender
 
 ######################################################################
-##########                                                  ##########
-##########                  PURE CONTENT BASED              ##########
-##########                                                  ##########
-######################################################################
+# #########                                                  ##########
+# #########                  PURE CONTENT BASED              ##########
+# #########                                                  ##########
+# #####################################################################
 from Recommenders.KNN.ItemKNNCBFRecommender import ItemKNNCBFRecommender
 from Recommenders.KNN.UserKNNCBFRecommender import UserKNNCBFRecommender
 
 
 
 ######################################################################
-##########                                                  ##########
-##########                       HYBRID                     ##########
-##########                                                  ##########
-######################################################################
+# #########                                                  ##########
+# #########                       HYBRID                     ##########
+# #########                                                  ##########
+# #####################################################################
 from Recommenders.KNN.ItemKNN_CFCBF_Hybrid_Recommender import ItemKNN_CFCBF_Hybrid_Recommender
 from Recommenders.KNN.UserKNN_CFCBF_Hybrid_Recommender import UserKNN_CFCBF_Hybrid_Recommender
 from Recommenders.FactorizationMachines.LightFMRecommender import LightFMItemHybridRecommender, LightFMUserHybridRecommender
@@ -60,9 +62,10 @@ from Recommenders.FeatureWeighting.Cython.FBSM_Rating_Cython import FBSM_Rating_
 
 from Recommenders.Hybrid.ScoresHybridRecommender import ScoresHybridRecommender
 from Recommenders.Hybrid.ScoresHybridRecommender import NScoresHybridRecommender
+from Recommenders.Hybrid.DifferentLossScoresHybridRecommender import DifferentLossScoresHybridRecommender, N_DifferentLossScoresHybridRecommender
 
 
-######################################################################
+""
 from skopt.space import Real, Integer, Categorical
 import traceback
 
@@ -70,9 +73,8 @@ from HyperparameterTuning.SearchBayesianSkopt import SearchBayesianSkopt
 from HyperparameterTuning.SearchSingleCase import SearchSingleCase
 from HyperparameterTuning.SearchAbstractClass import SearchInputRecommenderArgs
 
-######################################################################
-
-def runHyperparameterSearch_ScoresHybrid(recommenders, URM_train, ICM_object, ICM_name, URM_train_last_test = None,
+""
+def runHyperparameterSearch_DifferentLossScoresHybrid(recommenders, URM_train, ICM_object, ICM_name, URM_train_last_test = None,
                                         n_cases = None, n_random_starts = None, resume_from_saved = False,
                                         save_model = "no", evaluate_on_test = "no", max_total_time = None, evaluator_validation_earlystopping = None,
                                         evaluator_validation= None, evaluator_test=None, metric_to_optimize = None, cutoff_to_optimize = None,
@@ -127,10 +129,11 @@ def runHyperparameterSearch_ScoresHybrid(recommenders, URM_train, ICM_object, IC
 
         output_file_name_root = recommenders[0].RECOMMENDER_NAME + "_" + recommenders[1].RECOMMENDER_NAME
 
-        hyperparameterSearch = SearchBayesianSkopt(ScoresHybridRecommender, evaluator_validation=evaluator_validation, evaluator_test=evaluator_test)
+        hyperparameterSearch = SearchBayesianSkopt(DifferentLossScoresHybridRecommender, evaluator_validation=evaluator_validation, evaluator_test=evaluator_test)
 
         hyperparameters_range_dictionary = {}
 
+        hyperparameters_range_dictionary["norm"] = Categorical([1, 2, np.inf, -np.inf])
         hyperparameters_range_dictionary["alpha"] = Real(low = 0.001, high = 0.999, prior = 'uniform')
 
         recommender_input_args = SearchInputRecommenderArgs(
@@ -168,14 +171,18 @@ def runHyperparameterSearch_ScoresHybrid(recommenders, URM_train, ICM_object, IC
 
     except Exception as e:
 
-        print("On recommender {} Exception {}".format(ScoresHybridRecommender.RECOMMENDER_NAME, str(e)))
+        print("On recommender {} Exception {}".format(DifferentLossScoresHybridRecommender.RECOMMENDER_NAME, str(e)))
         traceback.print_exc()
 
         error_file = open(output_folder_path + "ErrorLog.txt", "a")
-        error_file.write("On recommender {} Exception {}\n".format(ScoresHybridRecommender.RECOMMENDER_NAME, str(e)))
+        error_file.write("On recommender {} Exception {}\n".format(DifferentLossScoresHybridRecommender.RECOMMENDER_NAME, str(e)))
         error_file.close()
-
-def runHyperparameterSearch_NScoresHybrid(recommenders, URM_train, ICM_object, ICM_name, URM_train_last_test = None,
+        
+        
+        
+        
+        
+def runHyperparameterSearch_N_DifferentLossScoresHybrid(recommenders, URM_train, ICM_object, ICM_name, URM_train_last_test = None,
                                         n_cases = None, n_random_starts = None, resume_from_saved = False,
                                         save_model = "no", evaluate_on_test = "no", max_total_time = None, evaluator_validation_earlystopping = None,
                                         evaluator_validation= None, evaluator_test=None, metric_to_optimize = None, cutoff_to_optimize = None,
@@ -217,10 +224,10 @@ def runHyperparameterSearch_NScoresHybrid(recommenders, URM_train, ICM_object, I
         URM_train_last_test = URM_train_last_test.copy()
 
 
-    earlystopping_keywargs = {"validation_every_n": 1,
+    earlystopping_keywargs = {"validation_every_n": 5,
                               "stop_on_validation": True,
                               "evaluator_object": evaluator_validation_earlystopping,
-                              "lower_validations_allowed": 50,
+                              "lower_validations_allowed": 5,
                               "validation_metric": metric_to_optimize,
                               }
 
@@ -228,21 +235,17 @@ def runHyperparameterSearch_NScoresHybrid(recommenders, URM_train, ICM_object, I
 
     try:
 
-        for idx, rec in enumerate(recommenders):
-            if idx == 0:
-                output_file_name_root = recommenders[idx].RECOMMENDER_NAME
-            else:
-                output_file_name_root = output_file_name_root + '_' + recommenders[idx].RECOMMENDER_NAME
+        output_file_name_root = recommenders[0].RECOMMENDER_NAME + "_" + recommenders[1].RECOMMENDER_NAME
 
-        hyperparameterSearch = SearchBayesianSkopt(NScoresHybridRecommender, evaluator_validation=evaluator_validation, evaluator_test=evaluator_test)
+        hyperparameterSearch = SearchBayesianSkopt(N_DifferentLossScoresHybridRecommender, evaluator_validation=evaluator_validation, evaluator_test=evaluator_test)
 
         hyperparameters_range_dictionary = {}
 
-        hyperparameters_range_dictionary["alpha"] = Real(low = 0.001, high = 1, prior = 'uniform')
-        hyperparameters_range_dictionary["beta"] = Real(low = 0.001, high = 1, prior = 'uniform')
+        hyperparameters_range_dictionary["norm"] = Categorical([1, 2, np.inf, -np.inf])
+        hyperparameters_range_dictionary["alpha"] = Real(low = 0.001, high = 0.999, prior = 'uniform')
+        hyperparameters_range_dictionary["beta"] = Real(low = 0.001, high = 0.999, prior = 'uniform')
         hyperparameters_range_dictionary["gamma"] = Categorical([0])
         hyperparameters_range_dictionary["delta"] = Categorical([0])
-
 
         recommender_input_args = SearchInputRecommenderArgs(
             CONSTRUCTOR_POSITIONAL_ARGS = [URM_train, recommenders, len(recommenders)],
@@ -279,9 +282,9 @@ def runHyperparameterSearch_NScoresHybrid(recommenders, URM_train, ICM_object, I
 
     except Exception as e:
 
-        print("On recommender {} Exception {}".format(NScoresHybridRecommender.RECOMMENDER_NAME, str(e)))
+        print("On recommender {} Exception {}".format(N_DifferentLossScoresHybridRecommender.RECOMMENDER_NAME, str(e)))
         traceback.print_exc()
 
         error_file = open(output_folder_path + "ErrorLog.txt", "a")
-        error_file.write("On recommender {} Exception {}\n".format(NScoresHybridRecommender.RECOMMENDER_NAME, str(e)))
+        error_file.write("On recommender {} Exception {}\n".format(N_DifferentLossScoresHybridRecommender.RECOMMENDER_NAME, str(e)))
         error_file.close()
