@@ -31,7 +31,7 @@ from Recommenders.SLIM.SLIMElasticNetRecommender import SLIMElasticNetRecommende
 # Matrix Factorization
 from Recommenders.MatrixFactorization.PureSVDRecommender import PureSVDRecommender, PureSVDItemRecommender
 from Recommenders.MatrixFactorization.IALSRecommender import IALSRecommender
-from Recommenders.MatrixFactorization.IALSRecommender_implicit import IALSRecommender_implicit
+#from Recommenders.MatrixFactorization.IALSRecommender_implicit import IALSRecommender_implicit
 
 from Recommenders.MatrixFactorization.NMFRecommender import NMFRecommender
 from Recommenders.MatrixFactorization.Cython.MatrixFactorization_Cython import MatrixFactorization_BPR_Cython,\
@@ -278,7 +278,6 @@ def runHyperparameterSearch_Hybrid(recommender_class, URM_train, ICM_object, ICM
                 hyperparameters_range_dictionary["UCM_weight"] = Real(low = 1e-2, high = 1e2, prior = 'log-uniform')
 
 
-
             recommender_input_args = SearchInputRecommenderArgs(
                 CONSTRUCTOR_POSITIONAL_ARGS = [URM_train, ICM_object],
                 CONSTRUCTOR_KEYWORD_ARGS = {},
@@ -415,8 +414,8 @@ def run_KNNRecommender_on_similarity_type(similarity_type, hyperparameterSearch,
     original_hyperparameter_search_space = hyperparameter_search_space
 
     hyperparameters_range_dictionary = {
-        "topK": Integer(5, 10000),
-        "shrink": Integer(0, 5000),
+        "topK": Integer(5, 1000),
+        "shrink": Integer(0, 1000),
         "similarity": Categorical([similarity_type]),
         "normalize": Categorical([True, False]),
     }
@@ -621,7 +620,7 @@ def runHyperparameterSearch_Collaborative(recommender_class, URM_train, URM_trai
     earlystopping_keywargs = {"validation_every_n": 5,
                               "stop_on_validation": True,
                               "evaluator_object": evaluator_validation_earlystopping,
-                              "lower_validations_allowed": 5,
+                              "lower_validations_allowed": 10,
                               "validation_metric": metric_to_optimize,
                               }
 
@@ -880,8 +879,8 @@ def runHyperparameterSearch_Collaborative(recommender_class, URM_train, URM_trai
         if recommender_class is IALSRecommender:
 
             hyperparameters_range_dictionary = {
-                "num_factors": Integer(20, 100),
-                "epochs": Categorical([50]),
+                "num_factors": Integer(30, 80),
+                "epochs": Categorical([300]),
                 "confidence_scaling": Categorical(["linear", "log"]),
                 "alpha": Real(low = 1e-3, high = 50.0, prior = 'log-uniform'),
                 "epsilon": Real(low = 1e-3, high = 10.0, prior = 'log-uniform'),
@@ -897,6 +896,7 @@ def runHyperparameterSearch_Collaborative(recommender_class, URM_train, URM_trai
         
         ##########################################################################################################
         
+        """
         if recommender_class is IALSRecommender_implicit:
 
             hyperparameters_range_dictionary = {
@@ -912,7 +912,7 @@ def runHyperparameterSearch_Collaborative(recommender_class, URM_train, URM_trai
                 FIT_POSITIONAL_ARGS = [],
                 FIT_KEYWORD_ARGS = {}
             )
-
+        """
 
         ##########################################################################################################
 

@@ -27,4 +27,3 @@ class ItemKNN_CFCBF_Hybrid_Recommender(ItemKNNCBFRecommender):
 
     def _get_cold_item_mask(self):
         return np.logical_and(self._cold_item_CBF_mask, self._cold_item_mask)
-
