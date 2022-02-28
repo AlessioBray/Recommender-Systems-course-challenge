@@ -9,12 +9,16 @@
 Part of the Recommender Systems exam at Politecnico di Milano consists in a kaggle challenge. In this repository you can find all the files that I used for the competition. 
 
 ## Overview
-The complete description of the problem to be solved can be found in the kaggle competition link (check the top of the read.me). The application domain is TV programs recommendation. The datasets we provide contains both interactions between users and TV shows, as well as features related to the shows. The main goal of the competition is to discover which items (TV shows) a user will interact with. The datasets includes around 6.2M interactions, 13k users, 18k items (TV shows) and four feature categories: 8 genres, 213 channels, 113 subgenres and 358k events (episode ids).
+
+The complete description of the problem to be solved can be found in the kaggle competition link (check the top of the read.me). 
+
+The application domain is TV programs recommendation. The datasets we provide contains both interactions between users and TV shows, as well as features related to the shows. The main goal of the competition is to discover which items (TV shows) a user will interact with. The datasets includes around 6.2M interactions, 13k users, 18k items (TV shows) and four feature categories: 8 genres, 213 channels, 113 subgenres and 358k events (episode ids).
 The goal is to **recommend a list of 10 potentially relevant items for each user**.
 
 Note that the evaluation metric for this competition was the mean average precision at position 10 (**MAP@10**).
 
 ## Results
+
 With my best submission I had the following results:
 - Ranked **15th** on public leaderboard
 - Ranked **16th** on private leaderboard
