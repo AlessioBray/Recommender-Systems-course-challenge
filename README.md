@@ -1,13 +1,31 @@
-# RecSys Course @ Politecnico di Milano
-This is the official repository for the Recommender Systems course at Polimi.
+# Recommender Systems Challenge 2021/2022 - Politecnico di Milano
 
-Developed by <a href="https://mauriziofd.github.io/" target="_blank">Maurizio Ferrari Dacrema</a>, Postdoc researcher at Politecnico di Milano. 
-See the websites of our [Recommender Systems Group](http://recsys.deib.polimi.it/) and our [Quantum Computing Group](https://quantum.polimi.it/) for more information on our team, thesis and research activities.
-The introductory slides are available [here](slides/Introduction%20and%20Materials%20for%20RecSys%20Practice%20Sessions.pdf). 
+<p align="center">
+    <img src="https://i.imgur.com/mPb3Qbd.gif" width="180" alt="Politecnico di Milano"/>
+</p>
+
+[![Kaggle](https://img.shields.io/badge/open-kaggle-blue)](https://www.kaggle.com/c/recommender-system-2021-challenge-polimi)
+
+Part of the Recommender Systems exam at Politecnico di Milano consists in a kaggle challenge. In this repository you can find all the files that I used for the competition. 
+
+## Overview
+The complete description of the problem to be solved can be found in the kaggle competition link (check the top of the read.me). The application domain is TV programs recommendation. The datasets we provide contains both interactions between users and TV shows, as well as features related to the shows. The main goal of the competition is to discover which items (TV shows) a user will interact with. The datasets includes around 6.2M interactions, 13k users, 18k items (TV shows) and four feature categories: 8 genres, 213 channels, 113 subgenres and 358k events (episode ids).
+The goal is to **recommend a list of 10 potentially relevant items for each user**.
+
+Note that the evaluation metric for this competition was the mean average precision at position 10 (**MAP@10**).
+
+## Results
+With my best submission I had the following results:
+- Ranked **15th** on public leaderboard
+- Ranked **16th** on private leaderboard
+
+## Recommenders source code
+
+Note that recommenders come from [this repository](https://github.com/MaurizioFD/RecSys_Course_AT_PoliMi), the official repository for the Recommender Systems course at Polimi.
+
 For Installation instructions see the following section [Installation](#Installation).
 
-
-#### This repository contains a Cython implementation of:
+#### It provides a Cython implementation of:
  - SLIM BPR: Item-item similarity matrix machine learning algorithm optimizing BPR.
     Uses a Cython tree-based sparse matrix, suitable for datasets whose number of items is too big for the
     dense similarity matrix to fit in memory. 
@@ -16,7 +34,7 @@ For Installation instructions see the following section [Installation](#Installa
  - FunkSVD: Matrix factorization optimizing RMSE
  - AsymmetricSVD
 
-#### This repo contains a Python implementation of:
+#### It provides a Python implementation of:
  - Item-based KNN collaborative
  - Item-based KNN content
  - User-based KNN
@@ -33,13 +51,13 @@ The BayesianSkoptSearch object will save the following files:
 - _best_model file which contains the trained model and can be loaded with recommender.load_model(path_to_best_model_file)
 - _metadata file which contains a dictionary with all the explored cases, for each the fit parameters, the validation results and, if that configuration was the new best one, the test results. It also contains, for all configurations, the train, validation and test time, in seconds.
  
-#### This repository contains the following runnable scripts
+#### It provides the following runnable scripts
 
  - run_all_algorithms.py: Script running sequentially all available algorithms and saving the results in result_all_algorithms.txt
  - run_parameter_search.py: Script performing parameter tuning for all available algorithms. Inside all parameters are listed with some common values.
  
 
-#### This repository also provides an implementation of:
+#### It also provides an implementation of:
  
  - Similarities: Cosine Similarity, Adjusted Cosine, Pearson Correlation, Jaccard Correlation, Tanimoto Coefficient, Dice coefficinent, Tversky coefficient, Asymmetric Cosine and Euclidean similarity: Implemented both in Python and Cython with the same interface. Base.compute_similarity chooses which to use depending on the density of the data and on whether a compiled cython version is available on your architecture and operative system. 
  - Metrics: MAP, recall (the denominator is the number of user's test items), precision_recall_min_den (the denominator is the min between the number of user's test items and the recommendation list length), precision, ROC-AUC, MRR, RR, NDCG, Hit Rate, ARHR, Novelty, Coverage, Shannon entropy, Gini Diversity, Herfindahl Diversity, Mean inter list Diversity, Feature based diversity
@@ -48,43 +66,6 @@ The BayesianSkoptSearch object will save the following files:
 
 Cython code is already compiled for Linux and Windows x86 (your usual personal computer architecture) and ppc64 (IBM Power PC). To recompile the code just run the cython compilaton script as described in the installation section.
 The code has beend developed for Linux and Windows.
-
-
-
-
-## Installation
-
-Note that this repository requires Python 3.8
-
-First we suggest you create an environment for this project using conda
-
-First checkout this repository, then enter in the repository folder and run this commands to create and activate a new environment:
-
-```console
-conda create -n RecSysFramework python=3.8 anaconda
-conda activate RecSysFramework
-```
-
-Then install all the requirements and dependencies using the following command.
-```console
-pip install -r requirements.txt
-```
-
-At this point you have to compile all Cython algorithms.
-In order to compile you must first have installed: _gcc_ and _python3 dev_. Under Linux those can be installed with the following commands:
-```console
-sudo apt install gcc 
-sudo apt-get install python3-dev
-```
-If you are using Windows as operating system, the installation procedure is a bit more complex. You may refer to [THIS](https://github.com/cython/cython/wiki/InstallingOnWindows) guide.
-
-Now you can compile all Cython algorithms by running the following command. The script will compile within the current active environment. The code has been developed for Linux and Windows platforms. During the compilation you may see some warnings. 
- 
-```console
-python run_compile_all_cython.py
-```
-
-
 
 ## Project structure
 
@@ -111,7 +92,6 @@ The function evaluateRecommender will take as input only the recommender object 
 
 ```
 
-
 #### Base.Similarity
 The similarity module allows to compute the item-item or user-user similarity.
 It is used by calling the Compute_Similarity class and passing which is the desired similarity and the sparse matrix you wish to use.
@@ -126,8 +106,14 @@ It is able to compute the following similarities: Cosine, Adjusted Cosine, Jacca
 
 ```
 
-
 ### Recommenders
+In this repo you can find the implementation of different recommender systems; in particular the following models can be found in the *Recommenders* folder:
+- Item and User based Collaborative Filtering
+- Item Content Based Filtering
+- P3Alpha and RP3Beta Graph Based models
+- Pure SVD and Implicit Alternating Least Squares models
+- Slim BPR and Slim ElasticNet
+
 All recommenders inherit from BaseRecommender, therefore have the same interface.
 You must provide the data when instantiating the recommender and then call the _fit_ function to build the corresponding model.
 
@@ -172,3 +158,35 @@ dataSplitter = DataSplitter_leave_k_out(dataset)
 dataSplitter.load_data()
 
 URM_train, URM_validation, URM_test = dataSplitter.get_holdout_split()
+```
+## Installation
+
+Note that this repository requires Python 3.8
+
+First we suggest you create an environment for this project using conda
+
+First checkout this repository, then enter in the repository folder and run this commands to create and activate a new environment:
+
+```console
+conda create -n RecSysFramework python=3.8 anaconda
+conda activate RecSysFramework
+```
+
+Then install all the requirements and dependencies using the following command.
+```console
+pip install -r requirements.txt
+```
+
+At this point you have to compile all Cython algorithms.
+In order to compile you must first have installed: _gcc_ and _python3 dev_. Under Linux those can be installed with the following commands:
+```console
+sudo apt install gcc 
+sudo apt-get install python3-dev
+```
+If you are using Windows as operating system, the installation procedure is a bit more complex. You may refer to [THIS](https://github.com/cython/cython/wiki/InstallingOnWindows) guide.
+
+Now you can compile all Cython algorithms by running the following command. The script will compile within the current active environment. The code has been developed for Linux and Windows platforms. During the compilation you may see some warnings. 
+ 
+```console
+python run_compile_all_cython.py
+```
